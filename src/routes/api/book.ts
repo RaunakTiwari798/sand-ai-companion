@@ -1,6 +1,6 @@
 import "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
-import { generateText, Output } from "ai";
+import { generateObject } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
 
@@ -32,12 +32,12 @@ export const Route = createFileRoute("/api/book")({
         const model = gateway("google/gemini-3-flash-preview");
 
         try {
-          const { experimental_output: output } = await generateText({
+          const { object } = await generateObject({
             model,
-            experimental_output: Output.object({ schema: InsightSchema }),
-            prompt: `Provide a structured insight for the book: "${book}". If you cannot identify the book confidently, infer best-known match. Fill every field with substance — no placeholders.`,
+            schema: InsightSchema,
+            prompt: `Provide a structured insight for the book: "${book}". If you cannot identify the book confidently, infer best-known match. Fill every field with substance — no placeholders. Make the summary 3-5 sentences. The conclusion should distill the book's final wisdom.`,
           });
-          return Response.json(output);
+          return Response.json(object);
         } catch (e) {
           const msg = e instanceof Error ? e.message : "AI error";
           return new Response(msg, { status: 500 });
