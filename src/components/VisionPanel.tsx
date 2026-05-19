@@ -25,12 +25,10 @@ export function VisionPanel() {
 
   const ask = () => {
     if (!image || !question.trim() || busy) return;
+    const mediaType = image.substring(5, image.indexOf(";"));
     void sendMessage({
-      role: "user",
-      parts: [
-        { type: "text", text: question.trim() },
-        { type: "file", mediaType: image.split(";")[0].replace("data:", ""), url: image },
-      ],
+      text: question.trim(),
+      files: [{ type: "file", mediaType, url: image }],
     });
     setQuestion("");
   };
